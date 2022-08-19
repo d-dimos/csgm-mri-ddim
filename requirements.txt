@@ -1,0 +1,12 @@
+torch==1.8.0
+torchvision
+click
+gdown
+Pillow
+scipy
+h5py
+tqdm
+imageio-ffmpeg==0.4.3
+torchinfo
+sigpy
+matplotlib
