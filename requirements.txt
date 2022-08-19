@@ -10,3 +10,4 @@ imageio-ffmpeg==0.4.3
 torchinfo
 sigpy
 matplotlib
+PyYAML
