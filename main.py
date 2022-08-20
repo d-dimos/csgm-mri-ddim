@@ -1,12 +1,13 @@
-import os
-import sys
 import argparse
-import yaml
-import shutil
+import copy
 import logging
+import os
+import shutil
+import sys
 
-import torch
 import numpy as np
+import torch
+import yaml
 
 from samplers import guided_DDIM, guided_LD
 from utils import dict2namespace
@@ -27,13 +28,6 @@ def get_args():
 
 
 def main():
-    # logging
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(levelname)s - %(filename)s - %(asctime)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger = logging.getLogger()
-    logger.addHandler(handler)
-    logger.setLevel(20)  # info
 
     # input arguments and configuration file
     args = get_args()
@@ -41,7 +35,6 @@ def main():
         config = yaml.safe_load(stream)
     config = dict2namespace(config)
     config.device = args.device
-    logging.info(f'Using device: {config.device}')
 
     # experiment dir
     exp_name = args.sampler + '_' + str(args.steps) + '_R=' + str(config.R) + '_' + 'or=' + config.orientation
@@ -62,6 +55,26 @@ def main():
     np.random.seed(config.seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(config.seed)
+
+    # logging
+    handler1 = logging.StreamHandler()
+    handler2 = logging.FileHandler(os.path.join(args.log_path, 'stdout.txt'))
+    formatter = logging.Formatter('%(levelname)s - %(filename)s - %(asctime)s - %(message)s')
+    handler1.setFormatter(formatter)
+    handler2.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.addHandler(handler1)
+    logger.addHandler(handler2)
+    logger.setLevel(20)  # info
+
+    logging.info(f'Device: {config.device}')
+    logging.info(f'Anatomy: {config.anatomy}')
+    logging.info(f'Batch Size: {config.batch_size}')
+    logging.info(f'Image Size: {config.image_size}')
+    logging.info(f'Orientation: {config.orientation}')
+    logging.info(f'Pattern: {config.pattern}')
+    config_dict = copy.copy(vars(config.model))
+    logging.info(f'Model Info:\n{yaml.dump(config_dict, default_flow_style=False)}')
 
     # run the experiment
     if args.sampler == 'ddim':

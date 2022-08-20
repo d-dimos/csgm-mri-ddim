@@ -297,7 +297,6 @@ def save_images(samples, loc, normalize=False):
     torchvision.utils.save_image(
         samples,
         loc,
-        nrow=int(samples.shape[0] ** 0.5),
         normalize=normalize,
         scale_each=True)
 

@@ -1,5 +1,4 @@
-import tqdm
-from tqdm.contrib.logging import logging_redirect_tqdm
+import logging
 
 from datasets import get_dataloader
 from datasets.utils import *
@@ -41,7 +40,8 @@ class guided_DDIM:
         sigmas = torch.cat([sigmas_torch, torch.zeros(1, device=self.device)], dim=0).to(self.device)
 
         # guided DDIM
-        for X in dataloader:
+        logging.info(f'Total batches {len(dataloader)}')
+        for idx, X in enumerate(dataloader):
 
             ref, mvue, maps, mask = X['ground_truth'], X['mvue'], X['maps'], X['mask']
             ref = ref.to(self.device).type(torch.complex128)
@@ -53,61 +53,67 @@ class guided_DDIM:
                 torch.complex(x[:, 0], x[:, 1]),
                 maps, mask)
 
-            with logging_redirect_tqdm():
 
-                xt = torch.randn((self.config.batch_size, 2, 384, 384), device=self.device)
+            xt = torch.randn((self.config.batch_size, 2, 384, 384), device=self.device)
 
-                for i, j in tqdm.tqdm(zip(timesteps, timesteps_next)):
-                    t = (torch.ones(self.config.batch_size) * i).to(self.device)
-                    sigma_t = sigmas[i]
-                    sigma_t_next = sigmas[j]
+            for step, (i, j) in enumerate(zip(timesteps, timesteps_next)):
+                if step % (len(timesteps)//5) == 0:
+                    logging.info(f'Batch: {idx} - Step: {step}')
 
-                    p_grad = score(xt, t.long())
+                t = (torch.ones(self.config.batch_size) * i).to(self.device)
+                sigma_t = sigmas[i]
+                sigma_t_next = sigmas[j]
 
-                    meas = forward_operator(normalize(xt, estimated_mvue))
-                    meas_grad = torch.view_as_real(
-                        torch.sum(ifft(meas - ref) * torch.conj(maps), axis=1)
-                    ).permute(0, 3, 1, 2)
-                    meas_grad = unnormalize(meas_grad, estimated_mvue)
-                    meas_grad = meas_grad.type(torch.cuda.FloatTensor)
-                    meas_grad /= torch.norm(meas_grad)
-                    meas_grad *= torch.norm(p_grad)
-                    meas_grad *= self.config.sampling.mse
+                p_grad = score(xt, t.long())
 
-                    s = p_grad - meas_grad
-                    coeff = sigma_t / (1 + sigma_t ** 2).sqrt()
-                    xt = (xt + coeff * (sigma_t - sigma_t_next) * s).type(torch.cuda.FloatTensor)
-
-                # denoising step
-                t_last = (torch.ones(self.config.batch_size) * (diffusion_timesteps-1)).to(self.device)
-                p_grad = score(xt, t_last.long())
                 meas = forward_operator(normalize(xt, estimated_mvue))
                 meas_grad = torch.view_as_real(
                     torch.sum(ifft(meas - ref) * torch.conj(maps), axis=1)
                 ).permute(0, 3, 1, 2)
-                meas_grad = unnormalize(meas_grad, estimated_mvue).type(torch.cuda.FloatTensor)
+                meas_grad = unnormalize(meas_grad, estimated_mvue)
+                meas_grad = meas_grad.type(torch.cuda.FloatTensor)
                 meas_grad /= torch.norm(meas_grad)
                 meas_grad *= torch.norm(p_grad)
                 meas_grad *= self.config.sampling.mse
 
                 s = p_grad - meas_grad
-                H = xt + sigmas[-2] ** 2 * s
+                coeff = sigma_t / (1 + sigma_t ** 2).sqrt()
+                xt = (xt + coeff * (sigma_t - sigma_t_next) * s).type(torch.cuda.FloatTensor)
 
-                H_norm = normalize(H, estimated_mvue)
-                to_display = torch.view_as_complex(
-                    H_norm.permute(0, 2, 3, 1).reshape(-1, 384, 384, 2).contiguous()
-                ).abs().flip(-2)
+            # denoising step
+            t_last = (torch.ones(self.config.batch_size) * (diffusion_timesteps-1)).to(self.device)
+            p_grad = score(xt, t_last.long())
+            meas = forward_operator(normalize(xt, estimated_mvue))
+            meas_grad = torch.view_as_real(
+                torch.sum(ifft(meas - ref) * torch.conj(maps), axis=1)
+            ).permute(0, 3, 1, 2)
+            meas_grad = unnormalize(meas_grad, estimated_mvue).type(torch.cuda.FloatTensor)
+            meas_grad /= torch.norm(meas_grad)
+            meas_grad *= torch.norm(p_grad)
+            meas_grad *= self.config.sampling.mse
 
-                for i in range(self.config.batch_size):
+            s = p_grad - meas_grad
+            H = xt + sigmas[-2] ** 2 * s
 
-                    slice_idx = X["slice_idx"][i].item()
-                    file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}.jpg')
+            H_norm = normalize(H, estimated_mvue)
+            to_display = torch.view_as_complex(
+                H_norm.permute(0, 2, 3, 1).reshape(-1, 384, 384, 2).contiguous()
+            ).abs().flip(-2)
 
-                    recon_img = to_display[i]
-                    orig_img = mvue[i].abs().flip(-2)
-                    to_save = torch.stack(orig_img, recon_img)
+            for i in range(self.config.batch_size):
 
-                    save_images(to_save, file_name, normalize=True)
+                slice_idx = X["slice_idx"][i].item()
+                file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}.jpg')
+
+                recon_img = to_display[i].unsqueeze(dim=0)
+                orig_img = mvue[i].abs().flip(-2)
+
+                recon_img[recon_img <= 0.05*torch.max(orig_img)] = 0
+                orig_img[orig_img <= 0.05*torch.max(orig_img)] = 0
+
+                to_save = torch.stack((orig_img, recon_img), dim=0)
+                save_images(to_save, file_name, normalize=True)
+
 
 
 
