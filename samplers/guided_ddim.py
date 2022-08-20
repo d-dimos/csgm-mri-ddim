@@ -125,7 +125,8 @@ class guided_DDIM:
 
         stats_dict = {'ssim': self.ssim_scores, 'psnr': self.psnr_scores}
         stats_file = os.path.join(self.args.log_path, 'stats.json')
-        json.dump(stats_dict, stats_file, indent=2)
+        with open(stats_file, 'w') as f:
+            json.dump(stats_dict, f, indent=2)
 
     def edit(self, config, orig_img, recon_img):
 
@@ -141,7 +142,7 @@ class guided_DDIM:
         recon_np = recon_np.astype(np.uint8)
 
         if config.circle_mask:
-            mask = np.zeros(recon_img.shape[:2], dtype="uint8")
+            mask = np.zeros(recon_np.shape, dtype=np.uint8)
             cv2.circle(mask, (192, 192), 165, 255, -1)
             recon_np = cv2.bitwise_and(recon_np, recon_np, mask=mask)
 
