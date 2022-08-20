@@ -6,6 +6,7 @@ import shutil
 import logging
 
 import torch
+import numpy as np
 
 from samplers import guided_DDIM, guided_LD
 from utils import dict2namespace
@@ -15,6 +16,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='Template')
     parser.add_argument('--config', type=str, required=True, help='Path to configuration file')
     parser.add_argument('--data_dir', type=str, required=True, help='Path to data directory')
+    parser.add_argument('--maps_dir', type=str, required=True, help='Path to sensitivity maps directory')
     parser.add_argument('--model_path', type=str, required=True, help='Path to pretrained checkpoint')
     parser.add_argument('--sampler', type=str, required=True, help='Sampler type', choices=['ddim', 'LD'])
     parser.add_argument('--steps', type=int, required=True, help='Sampling steps')
@@ -56,12 +58,20 @@ def main():
     else:
         os.makedirs(args.log_path)
 
+    # set random seed
+    torch.manual_seed(config.seed)
+    np.random.seed(config.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
+
     # run the experiment
     if args.sampler == 'ddim':
-        guided_DDIM(args, config).sample()
+        guided_DDIM(args, config, logger).sample()
     if args.sampler == 'LD':
-        guided_LD(args, config).sample()
+        guided_LD(args, config, logger).sample()
+
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
