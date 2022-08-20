@@ -68,7 +68,7 @@ def main():
     if args.sampler == 'ddim':
         guided_DDIM(args, config, logger).sample()
     if args.sampler == 'LD':
-        guided_LD(args, config, logger).sample()
+        guided_LD(args, config).sample()
 
     return 0
 

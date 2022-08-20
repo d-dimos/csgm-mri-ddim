@@ -1,5 +1,4 @@
 from dataloaders import *
-from utils import *
 
 
 def get_dataloader(files, config, args):
