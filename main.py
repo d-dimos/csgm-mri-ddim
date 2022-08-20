@@ -16,11 +16,11 @@ from utils import dict2namespace
 def get_args():
     parser = argparse.ArgumentParser(description='Template')
     parser.add_argument('--config', type=str, required=True, help='Path to configuration file')
-    parser.add_argument('--data_dir', type=str, required=True, help='Path to data directory')
-    parser.add_argument('--maps_dir', type=str, required=True, help='Path to sensitivity maps directory')
-    parser.add_argument('--model_path', type=str, required=True, help='Path to pretrained checkpoint')
     parser.add_argument('--sampler', type=str, required=True, help='Sampler type', choices=['ddim', 'LD'])
     parser.add_argument('--steps', type=int, required=True, help='Sampling steps')
+    parser.add_argument('--R', type=int, required=True, help='Acceleration rate')
+    parser.add_argument('--orientation', type=str, required=True, help='Sampling orientation', choices=['horizontal', 'vertical'])
+    parser.add_argument('--pattern', type=str, required=True, help='Sampling pattern', choices=['equispaced'])
     parser.add_argument('--save_images', action='store_true', help='Whether to save the test images')
     parser.add_argument('--exp', type=str, default='exp', help='Path to experiment logs')
     args = parser.parse_args()
@@ -38,7 +38,7 @@ def main():
     config.device = args.device
 
     # experiment dir
-    exp_name = args.sampler + '_' + str(args.steps) + '_R=' + str(config.R) + '_' + 'or=' + config.orientation
+    exp_name = args.sampler + '_' + str(args.steps) + '_R=' + str(args.R) + '_' + args.orientation
     args.log_path = os.path.join(args.exp, exp_name)
     if os.path.exists(args.log_path):
         response = input("Folder already exists. Overwrite? (Y/N)")
@@ -72,8 +72,8 @@ def main():
     logging.info(f'Anatomy: {config.anatomy}')
     logging.info(f'Batch Size: {config.batch_size}')
     logging.info(f'Image Size: {config.image_size}')
-    logging.info(f'Orientation: {config.orientation}')
-    logging.info(f'Pattern: {config.pattern}')
+    logging.info(f'Orientation: {args.orientation}')
+    logging.info(f'Pattern: {args.pattern}')
     config_dict = copy.copy(vars(config.model))
     logging.info(f'Model Info:\n{yaml.dump(config_dict, default_flow_style=False)}')
 

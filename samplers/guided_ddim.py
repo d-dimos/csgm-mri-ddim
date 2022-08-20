@@ -14,7 +14,7 @@ class guided_DDIM:
         self.args = args
         self.config = config
         self.device = config.device
-        self.files = get_all_files(args.data_dir, pattern='*.h5')
+        self.files = get_all_files(config.data_dir, pattern='*.h5')
 
         os.makedirs(args.log_path, exist_ok=True)
 
@@ -24,7 +24,7 @@ class guided_DDIM:
         # load model
         score = NCSNv2Deepest(self.config).to(self.device)
         score = torch.nn.DataParallel(score)
-        states = torch.load(self.args.model_path)
+        states = torch.load(self.config.model_path)
         score.load_state_dict(states[0], strict=True)
 
         # get dataset
@@ -49,7 +49,7 @@ class guided_DDIM:
             maps = maps.to(self.device)
             mask = mask.to(self.device)
             estimated_mvue = torch.tensor(get_mvue(ref.cpu().numpy(), maps.cpu().numpy()), device=self.device)
-            forward_operator = lambda x: MulticoilForwardMRI(self.config.orientation)(
+            forward_operator = lambda x: MulticoilForwardMRI(self.args.orientation)(
                 torch.complex(x[:, 0], x[:, 1]),
                 maps, mask)
 

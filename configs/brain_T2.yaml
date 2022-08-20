@@ -5,10 +5,10 @@ image_size:
   - 384
 batch_size: 1
 
-## Acceleration
-R: 4
-pattern: equispaced
-orientation: vertical
+## Paths
+model_path: "/content/csgm-mri-ddim/ncsnv2-mri-mvue/logs/mri-mvue/checkpoint_100000.pth"
+data_dir: "/content/csgm-mri-ddim/datasets/brain_T2"
+maps_dir: "/content/csgm-mri-ddim/datasets/brain_T2_maps"
 
 ## Original NCSN configurations
 sampling:
