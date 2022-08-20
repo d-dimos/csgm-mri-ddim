@@ -62,7 +62,7 @@ def main():
     plt.legend()
     plt.grid(linestyle='--', linewidth=0.4)
 
-    output_file = os.path.join(args.exp, f'{args.metric}_{args.sampler}_{args.orientation}')
+    output_file = os.path.join(args.exp, f'SSIM_{args.sampler}_{args.orientation}')
     plt.savefig(output_file, dpi=300)
 
     # PSNR METRIC
@@ -93,7 +93,7 @@ def main():
     plt.legend()
     plt.grid(linestyle='--', linewidth=0.4)
 
-    output_file = os.path.join(args.exp, f'{args.metric}_{args.sampler}_{args.orientation}')
+    output_file = os.path.join(args.exp, f'PSNR_{args.sampler}_{args.orientation}')
     plt.savefig(output_file, dpi=300)
 
     return 0
