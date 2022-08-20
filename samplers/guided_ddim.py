@@ -84,7 +84,7 @@ class guided_DDIM:
                 meas = forward_operator(normalize(xt, estimated_mvue))
                 meas_grad = torch.view_as_real(
                     torch.sum(ifft(meas - ref) * torch.conj(maps), axis=1)
-                ).permute(0, 1, 2)
+                ).permute(0, 3, 1, 2)
                 meas_grad = unnormalize(meas_grad, estimated_mvue).type(torch.cuda.FloatTensor)
                 meas_grad /= torch.norm(meas_grad)
                 meas_grad *= torch.norm(p_grad)
