@@ -3,7 +3,7 @@ seed: 42
 image_size:
   - 384
   - 384
-batch_size: 1
+batch_size: 4
 denoise_005: true
 circle_mask: true
 
