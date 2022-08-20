@@ -12,7 +12,7 @@ def get_dataloader(files, config, args):
                                   orientation=config.orientation)
 
     loader = torch.utils.data.DataLoader(dataset=dataset,
-                                         batch_size=config.sampling.batch_size,
+                                         batch_size=config.batch_size,
                                          sampler=None,
                                          shuffle=False)
 

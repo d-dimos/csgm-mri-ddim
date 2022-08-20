@@ -20,7 +20,6 @@ def get_args():
     parser.add_argument('--model_path', type=str, required=True, help='Path to pretrained checkpoint')
     parser.add_argument('--sampler', type=str, required=True, help='Sampler type', choices=['ddim', 'LD'])
     parser.add_argument('--steps', type=int, required=True, help='Sampling steps')
-    parser.add_argument('--log_path', type=str, required=True, help='Path to logging directory')
     parser.add_argument('--exp', type=str, default='exp', help='Path to experiment logs')
     args = parser.parse_args()
     args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -62,7 +61,7 @@ def main():
     torch.manual_seed(config.seed)
     np.random.seed(config.seed)
     if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(args.seed)
+        torch.cuda.manual_seed_all(config.seed)
 
     # run the experiment
     if args.sampler == 'ddim':

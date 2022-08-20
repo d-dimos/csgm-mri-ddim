@@ -3,6 +3,7 @@ seed: 42
 image_size:
   - 384
   - 384
+batch_size: 1
 
 ## Acceleration
 R: 4
@@ -11,7 +12,6 @@ orientation: vertical
 
 ## Original NCSN configurations
 sampling:
-  batch_size: 1
   step_lr: 5e-5
   n_steps_each: 4
   mse: 5.
