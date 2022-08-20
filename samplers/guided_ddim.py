@@ -10,10 +10,9 @@ __all__ = ['guided_DDIM']
 
 
 class guided_DDIM:
-    def __init__(self, args, config, logger):
+    def __init__(self, args, config):
         self.args = args
         self.config = config
-        self.logger = logger
         self.device = config.device
         self.files = get_all_files(args.data_dir, pattern='*.h5')
 
@@ -40,6 +39,7 @@ class guided_DDIM:
         sigmas = torch.cat([sigmas_torch, torch.zeros(1, device=self.device)], dim=0).to(self.device)
 
         # guided DDIM
+        log_interval = 1 if len(timesteps) < 5 else len(timesteps) // 5
         logging.info(f'Total batches {len(dataloader)}')
         for idx, X in enumerate(dataloader):
 
@@ -53,11 +53,10 @@ class guided_DDIM:
                 torch.complex(x[:, 0], x[:, 1]),
                 maps, mask)
 
-
             xt = torch.randn((self.config.batch_size, 2, 384, 384), device=self.device)
 
             for step, (i, j) in enumerate(zip(timesteps, timesteps_next)):
-                if step % (len(timesteps)//5) == 0:
+                if step % log_interval == 0:
                     logging.info(f'Batch: {idx} - Step: {step}')
 
                 t = (torch.ones(self.config.batch_size) * i).to(self.device)
@@ -81,7 +80,7 @@ class guided_DDIM:
                 xt = (xt + coeff * (sigma_t - sigma_t_next) * s).type(torch.cuda.FloatTensor)
 
             # denoising step
-            t_last = (torch.ones(self.config.batch_size) * (diffusion_timesteps-1)).to(self.device)
+            t_last = (torch.ones(self.config.batch_size) * (diffusion_timesteps - 1)).to(self.device)
             p_grad = score(xt, t_last.long())
             meas = forward_operator(normalize(xt, estimated_mvue))
             meas_grad = torch.view_as_real(
@@ -108,13 +107,9 @@ class guided_DDIM:
                 recon_img = to_display[i].unsqueeze(dim=0)
                 orig_img = mvue[i].abs().flip(-2)
 
-                recon_img[recon_img <= 0.05*torch.max(orig_img)] = 0
-                orig_img[orig_img <= 0.05*torch.max(orig_img)] = 0
+                recon_img[recon_img <= 0.05 * torch.max(orig_img)] = 0
+                orig_img[orig_img <= 0.05 * torch.max(orig_img)] = 0
 
-                to_save = torch.stack((orig_img, recon_img), dim=0)
-                save_images(to_save, file_name, normalize=True)
-
-
-
-
-
+                if self.args.save_images:
+                    to_save = torch.stack((orig_img, recon_img), dim=0)
+                    save_images(to_save, file_name, normalize=True)

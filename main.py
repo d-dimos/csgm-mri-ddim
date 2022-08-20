@@ -21,6 +21,7 @@ def get_args():
     parser.add_argument('--model_path', type=str, required=True, help='Path to pretrained checkpoint')
     parser.add_argument('--sampler', type=str, required=True, help='Sampler type', choices=['ddim', 'LD'])
     parser.add_argument('--steps', type=int, required=True, help='Sampling steps')
+    parser.add_argument('--save_images', action='store_true', help='Whether to save the test images')
     parser.add_argument('--exp', type=str, default='exp', help='Path to experiment logs')
     args = parser.parse_args()
     args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -78,7 +79,7 @@ def main():
 
     # run the experiment
     if args.sampler == 'ddim':
-        guided_DDIM(args, config, logger).sample()
+        guided_DDIM(args, config).sample()
     if args.sampler == 'LD':
         guided_LD(args, config).sample()
 
