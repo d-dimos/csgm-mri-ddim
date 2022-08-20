@@ -1,4 +1,9 @@
 import logging
+import cv2
+import json
+
+from skimage.metrics import structural_similarity as ssim
+from skimage.metrics import peak_signal_noise_ratio as psnr
 
 from datasets import get_dataloader
 from datasets.utils import *
@@ -15,6 +20,9 @@ class guided_DDIM:
         self.config = config
         self.device = config.device
         self.files = get_all_files(config.data_dir, pattern='*.h5')
+
+        self.ssim_scores = []
+        self.psnr_scores = []
 
         os.makedirs(args.log_path, exist_ok=True)
 
@@ -107,9 +115,34 @@ class guided_DDIM:
                 recon_img = to_display[i].unsqueeze(dim=0)
                 orig_img = mvue[i].abs().flip(-2)
 
-                recon_img[recon_img <= 0.05 * torch.max(orig_img)] = 0
-                orig_img[orig_img <= 0.05 * torch.max(orig_img)] = 0
+                orig_th, recon_th, orig_np, recon_np = self.edit(self.config, orig_img, recon_img)
+                self.ssim_scores.append(ssim(orig_np, recon_np))
+                self.psnr_scores.append(psnr(orig_np, recon_np))
 
                 if self.args.save_images:
-                    to_save = torch.stack((orig_img, recon_img), dim=0)
+                    to_save = torch.stack((orig_th, recon_th), dim=0)
                     save_images(to_save, file_name, normalize=True)
+
+        stats_dict = {'ssim': self.ssim_scores, 'psnr': self.psnr_scores}
+        stats_file = os.path.join(self.args.log_path, 'stats.json')
+        json.dump(stats_dict, stats_file, indent=2)
+
+    def edit(self, config, orig_img, recon_img):
+
+        if config.denoise_005:
+            recon_img[recon_img <= 0.05 * torch.max(orig_img)] = 0
+            orig_img[orig_img <= 0.05 * torch.max(orig_img)] = 0
+
+        orig_np = orig_img.squeeze().cpu().numpy()
+        orig_np *= 255.0 / orig_np.max()
+        orig_np = orig_np.astype(np.uint8)
+        recon_np = recon_img.squeeze().cpu().numpy()
+        recon_np *= 255.0 / recon_np.max()
+        recon_np = recon_np.astype(np.uint8)
+
+        if config.circle_mask:
+            mask = np.zeros(recon_img.shape[:2], dtype="uint8")
+            cv2.circle(mask, (192, 192), 165, 255, -1)
+            recon_np = cv2.bitwise_and(recon_np, recon_np, mask=mask)
+
+        return orig_img, recon_img, orig_np, recon_np
