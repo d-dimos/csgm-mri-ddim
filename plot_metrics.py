@@ -21,7 +21,7 @@ def get_args():
 def main():
     args = get_args()
     R_values = [2, 3, 4, 6, 8, 12]
-    steps_values = [8, 16, 25, 32, 64, 128, 256, 512, 1024, 2048]
+    steps_values = [8, 16, 25, 32, 64, 128, 256]
 
     step_color = {8: '#804000',
                   16: '#CC0000',
