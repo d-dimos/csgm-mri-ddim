@@ -11,6 +11,8 @@ from models import get_sigmas
 from models.ncsnv2 import NCSNv2Deepest
 from utils import get_all_files
 
+import torchvision.transforms as transforms
+
 __all__ = ['guided_DDIM']
 
 
@@ -20,6 +22,7 @@ class guided_DDIM:
         self.config = config
         self.device = config.device
         self.files = get_all_files(config.data_dir, pattern='*.h5')
+        self.transform = transforms.Compose([transforms.ToTensor()])
 
         self.ssim_scores = []
         self.psnr_scores = []
@@ -120,8 +123,13 @@ class guided_DDIM:
                 self.psnr_scores.append(psnr(orig_np, recon_np))
 
                 if self.args.save_images:
-                    to_save = torch.stack((orig_th, recon_th), dim=0)
-                    save_images(to_save, file_name, normalize=True)
+
+                    file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}_or.jpg')
+                    save_images(orig_th, file_name, normalize=True)
+
+                    recon_th = self.transform(recon_np)
+                    file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}.jpg')
+                    save_images(recon_th, file_name, normalize=True)
 
         stats_dict = {'ssim': self.ssim_scores, 'psnr': self.psnr_scores}
         stats_file = os.path.join(self.args.log_path, 'stats.json')
