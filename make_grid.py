@@ -8,27 +8,26 @@ import torch
 from skimage.metrics import peak_signal_noise_ratio as psnr
 from skimage.metrics import structural_similarity as ssim
 from torchvision import transforms
-from torchvision.io import read_image
+from torchvision.io import read_image, ImageReadMode
 from torchvision.utils import make_grid
 
 
 def edit(orig_img, recon_img):
+    recon_img[recon_img <= 0.05 * torch.max(orig_img)] = 0
+    orig_img[orig_img <= 0.05 * torch.max(orig_img)] = 0
 
-        recon_img[recon_img <= 0.05 * torch.max(orig_img)] = 0
-        orig_img[orig_img <= 0.05 * torch.max(orig_img)] = 0
+    orig_np = orig_img.squeeze().cpu().numpy()
+    # orig_np *= 255.0 / orig_np.max()
+    # orig_np = orig_np.astype(np.uint8)
+    recon_np = recon_img.squeeze().cpu().numpy()
+    # recon_np *= 255.0 / recon_np.max()
+    # recon_np = recon_np.astype(np.uint8)
 
-        orig_np = orig_img.squeeze().cpu().numpy()
-        orig_np *= 255.0 / orig_np.max()
-        orig_np = orig_np.astype(np.uint8)
-        recon_np = recon_img.squeeze().cpu().numpy()
-        recon_np *= 255.0 / recon_np.max()
-        recon_np = recon_np.astype(np.uint8)
+    mask = np.zeros(recon_np.shape, dtype=np.uint8)
+    cv2.circle(mask, (192, 192), 165, 255, -1)
+    recon_np = cv2.bitwise_and(recon_np, recon_np, mask=mask)
 
-        mask = np.zeros(recon_np.shape, dtype=np.uint8)
-        cv2.circle(mask, (192, 192), 165, 255, -1)
-        recon_np = cv2.bitwise_and(recon_np, recon_np, mask=mask)
-
-        return orig_img, recon_img, orig_np, recon_np
+    return orig_img, recon_img, orig_np, recon_np
 
 
 def get_args():
@@ -43,7 +42,7 @@ def main():
 
     to_plot = []
     for i in range(16):
-        origi = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}_or.jpg'))
+        origi = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}_or.jpg'), mode=ImageReadMode.GRAY)
         recon = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}.jpg'))
 
         _, _, orig_np, recon_np = edit(origi, recon)
@@ -51,13 +50,12 @@ def main():
         ssim_score = ssim(orig_np, recon_np)
         psnr_score = psnr(orig_np, recon_np)
 
-        to_plot.append( origi )
-        to_plot.append( recon )
+        to_plot.append(origi)
+        to_plot.append(recon)
 
-
-    grid = make_grid(to_plot, nrow=2, ncol=16, padding=10)
+    grid = make_grid(to_plot, nrow=8, ncol=4, padding=10)
     grid = transforms.ToPILImage()(grid)
-    grid.save( os.path.join(args.exp_dir, f'brains_32_vertical.jpg') )
+    grid.save(os.path.join(args.exp_dir, f'brains_grid.jpg'))
 
     return 0
 
