@@ -21,15 +21,15 @@ def get_args():
 def main():
     args = get_args()
     R_values = [2, 3, 4, 6, 8, 12]
-    steps_values = [8, 16, 25, 32, 64, 128, 256]
+    steps_values = [8, 16, 32, 64, 128, 256]
 
     step_color = {8: '#804000',
-                  16: '#CC0000',
+                  16: '#0039E6',
                   25: '#0343DF',
                   32: '#9A0EEA',
                   64: '#E50000',
-                  128: '#15B01A',
-                  256: '#FF66FF',
+                  128: '#FFCC00',
+                  256: '#669900',
                   512: '#CCCC00',
                   1024: '#004D00',
                   2048: '#660033'}
@@ -56,7 +56,8 @@ def main():
 
         plt.ylim((0.79, 1.01))
         plt.yticks([0.8, 0.85, 0.9, 0.95, 1.00])
-        plt.plot(R_values, means, '--o', color=step_color[steps], linewidth=1.2, label=f'{steps} steps ({args.sampler})')
+        plt.plot(R_values, means, '--o', color=step_color[steps], linewidth=1.2,
+                 label=f'{steps} steps ({args.sampler})')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.2)
 
     plt.legend()
@@ -87,7 +88,8 @@ def main():
 
         plt.ylim((19, 46))
         plt.yticks([20, 25, 30, 35, 40, 45])
-        plt.plot(R_values, means, '--o', color=step_color[steps], linewidth=1.2, label=f'{steps} steps ({args.sampler})')
+        plt.plot(R_values, means, '--o', color=step_color[steps], linewidth=1.2,
+                 label=f'{steps} steps ({args.sampler})')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.2)
 
     plt.legend()
