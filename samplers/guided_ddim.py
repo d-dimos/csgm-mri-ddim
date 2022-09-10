@@ -1,17 +1,19 @@
-import logging
-import cv2
 import json
+import logging
 
-from skimage.metrics import structural_similarity as ssim
+import cv2
+import torchvision.transforms as transforms
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 from skimage.metrics import peak_signal_noise_ratio as psnr
+from skimage.metrics import structural_similarity as ssim
 
 from datasets import get_dataloader
 from datasets.utils import *
 from models import get_sigmas
 from models.ncsnv2 import NCSNv2Deepest
 from utils import get_all_files
-
-import torchvision.transforms as transforms
 
 __all__ = ['guided_DDIM']
 
@@ -119,17 +121,25 @@ class guided_DDIM:
                 orig_img = mvue[i].abs().flip(-2)
 
                 orig_th, recon_th, orig_np, recon_np = self.edit(self.config, orig_img, recon_img)
-                self.ssim_scores.append(ssim(orig_np, recon_np))
-                self.psnr_scores.append(psnr(orig_np, recon_np))
+                ssim_score = ssim(orig_np, recon_np)
+                psnr_score = psnr(orig_np, recon_np)
+                self.ssim_scores.append(ssim_score)
+                self.psnr_scores.append(psnr_score)
 
                 if self.args.save_images:
 
                     file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}_or.jpg')
                     save_images(orig_th, file_name, normalize=True)
 
-                    recon_th = self.transform(recon_np)
+                    recon_np = Image.fromarray(recon_np)
+                    draw = ImageDraw.Draw(recon_np)
+                    font = ImageFont.truetype(
+                        '/content/image_processing_with_python/09_drawing_text/Gidole-Regular.ttf', 16
+                        )
+                    draw.text((175, 360), "SSIM: {:0.2f}".format(ssim_score),(255), font=font )
+                    draw.text((265, 360), "PSNR: {:0.2f}(db)".format(psnr_score),(255), font=font )
                     file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}.jpg')
-                    save_images(recon_th, file_name, normalize=True)
+                    recon_np.save(file_name)
 
         stats_dict = {'ssim': self.ssim_scores, 'psnr': self.psnr_scores}
         stats_file = os.path.join(self.args.log_path, 'stats.json')
