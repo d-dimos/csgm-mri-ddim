@@ -5,8 +5,7 @@ import sys
 import cv2
 import numpy as np
 import torch
-from skimage.metrics import peak_signal_noise_ratio as psnr
-from skimage.metrics import structural_similarity as ssim
+import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.io import read_image, ImageReadMode
 from torchvision.utils import make_grid
@@ -37,38 +36,76 @@ def main():
     args = get_args()
 
     to_plot = []
-    for i in range(8):
+    for i in range(4):
         origi = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}_or.jpg'), mode=ImageReadMode.GRAY)
         recon = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}.jpg'))
 
         _, _, orig_np, recon_np = edit(origi, recon)
 
-        ssim_score = ssim(orig_np, recon_np)
-        psnr_score = psnr(orig_np, recon_np)
+        pad = (1,1,1,1)
+        origi = F.pad(origi, pad, "constant", 255)
+        recon = F.pad(recon, pad, "constant", 255)
 
         to_plot.append(origi)
         to_plot.append(recon)
 
-    grid = make_grid(to_plot, nrow=4, ncol=4, padding=10)
+    grid = make_grid(to_plot, nrow=2, ncol=4, padding=0)
     grid = transforms.ToPILImage()(grid)
     grid.save(os.path.join(args.exp_dir, f'brains_grid0.jpg'))
 
     to_plot = []
-    for i in range(8, 16):
+    for i in range(4,8):
         origi = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}_or.jpg'), mode=ImageReadMode.GRAY)
         recon = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}.jpg'))
 
         _, _, orig_np, recon_np = edit(origi, recon)
 
-        ssim_score = ssim(orig_np, recon_np)
-        psnr_score = psnr(orig_np, recon_np)
+        pad = (1,1,1,1)
+        origi = F.pad(origi, pad, "constant", 255)
+        recon = F.pad(recon, pad, "constant", 255)
 
         to_plot.append(origi)
         to_plot.append(recon)
 
-    grid = make_grid(to_plot, nrow=4, ncol=4, padding=10)
+    grid = make_grid(to_plot, nrow=2, ncol=4, padding=0)
     grid = transforms.ToPILImage()(grid)
     grid.save(os.path.join(args.exp_dir, f'brains_grid1.jpg'))
+
+    to_plot = []
+    for i in range(8, 12):
+        origi = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}_or.jpg'), mode=ImageReadMode.GRAY)
+        recon = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}.jpg'))
+
+        _, _, orig_np, recon_np = edit(origi, recon)
+
+        pad = (1,1,1,1)
+        origi = F.pad(origi, pad, "constant", 255)
+        recon = F.pad(recon, pad, "constant", 255)
+
+        to_plot.append(origi)
+        to_plot.append(recon)
+
+    grid = make_grid(to_plot, nrow=2, ncol=4, padding=0)
+    grid = transforms.ToPILImage()(grid)
+    grid.save(os.path.join(args.exp_dir, f'brains_grid2.jpg'))
+
+    to_plot = []
+    for i in range(12, 16):
+        origi = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}_or.jpg'), mode=ImageReadMode.GRAY)
+        recon = read_image(os.path.join(args.exp_dir, f'brain_T2_{i}.jpg'))
+
+        _, _, orig_np, recon_np = edit(origi, recon)
+
+        pad = (1,1,1,1)
+        origi = F.pad(origi, pad, "constant", 255)
+        recon = F.pad(recon, pad, "constant", 255)
+
+        to_plot.append(origi)
+        to_plot.append(recon)
+
+    grid = make_grid(to_plot, nrow=2, ncol=4, padding=0)
+    grid = transforms.ToPILImage()(grid)
+    grid.save(os.path.join(args.exp_dir, f'brains_grid3.jpg'))
 
     return 0
 
