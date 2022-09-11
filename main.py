@@ -19,7 +19,8 @@ def get_args():
     parser.add_argument('--sampler', type=str, required=True, help='Sampler type', choices=['ddim', 'LD'])
     parser.add_argument('--steps', type=int, required=True, help='Sampling steps')
     parser.add_argument('--R', type=int, required=True, help='Acceleration rate')
-    parser.add_argument('--orientation', type=str, required=True, help='Sampling orientation', choices=['horizontal', 'vertical'])
+    parser.add_argument('--orientation', type=str, required=True, help='Sampling orientation',
+                        choices=['horizontal', 'vertical'])
     parser.add_argument('--pattern', type=str, required=True, help='Sampling pattern', choices=['equispaced'])
     parser.add_argument('--save_images', action='store_true', help='Whether to save the test images')
     parser.add_argument('--exp', type=str, default='exp', help='Path to experiment logs')
@@ -29,7 +30,6 @@ def get_args():
 
 
 def main():
-
     # input arguments and configuration file
     args = get_args()
     with open(args.config, 'r') as stream:
@@ -38,6 +38,10 @@ def main():
     config.device = args.device
 
     # experiment dir
+    if args.sampler == "LD":
+        args.steps = config.sampling.n_steps_each*(config.model.num_classes - 1801 + 1) + \
+                     3*(1800 - config.sampling.start_iter + 1)
+
     exp_name = args.sampler + '_' + str(args.steps) + '_R=' + str(args.R) + '_' + args.orientation
     args.log_path = os.path.join(args.exp, exp_name)
     if os.path.exists(args.log_path):

@@ -48,8 +48,8 @@ class guided_LD:
         sigmas = sigmas_torch.cpu().numpy()
 
         # guided Langevin Dynamics
-        timesteps = self.config.model.num_classes - self.config.sampling.start_iter
-        log_interval = 1 if len(timesteps) < 5 else len(timesteps) // 5
+        timesteps = self.config.model.num_classes - self.config.sampling.start_iter + 1
+        log_interval = 1 if timesteps < 5 else timesteps // 5
         logging.info(f'Total batches {len(dataloader)}')
         for idx, X in enumerate(dataloader):
 
@@ -66,6 +66,7 @@ class guided_LD:
             xt = torch.randn((self.config.batch_size, 2, self.config.image_size[0], self.config.image_size[1]),
                              device=self.device)
 
+            total_steps = 0
             for step in range(self.config.model.num_classes):
                 if step <= self.config.sampling.start_iter:
                     continue
@@ -82,12 +83,13 @@ class guided_LD:
                 step_size = self.config.sampling.step_lr * (sigma / sigmas[-1]) ** 2
 
                 for _ in range(n_steps_each):
+                    total_steps += 1
                     noise = torch.randn_like(xt) * np.sqrt(step_size * 2)
                     p_grad = score(xt, labels)
 
                     meas = forward_operator(normalize(xt, estimated_mvue))
                     meas_grad = torch.view_as_real(
-                        torch.sum(self._ifft(meas - ref) * torch.conj(maps), axis=1)).permute(0, 3, 1, 2)
+                        torch.sum(ifft(meas - ref) * torch.conj(maps), axis=1)).permute(0, 3, 1, 2)
                     meas_grad = unnormalize(meas_grad, estimated_mvue)
                     meas_grad = meas_grad.type(torch.cuda.FloatTensor)
                     meas_grad /= torch.norm(meas_grad)
@@ -104,9 +106,6 @@ class guided_LD:
 
             for i in range(self.config.batch_size):
 
-                slice_idx = X["slice_idx"][i].item()
-                file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}.jpg')
-
                 recon_img = to_display[i].unsqueeze(dim=0)
                 orig_img = mvue[i].abs().flip(-2)
 
@@ -117,6 +116,7 @@ class guided_LD:
                 self.psnr_scores.append(psnr_score)
 
                 if self.args.save_images:
+                    slice_idx = X["slice_idx"][i].item()
                     file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}_or.jpg')
                     save_images(orig_th, file_name, normalize=True)
 
@@ -125,8 +125,8 @@ class guided_LD:
                     font = ImageFont.truetype(
                         '/content/image_processing_with_python/09_drawing_text/Gidole-Regular.ttf', 16
                     )
-                    draw.text((175, 360), "SSIM: {:0.2f}".format(ssim_score), (255), font=font)
-                    draw.text((265, 360), "PSNR: {:0.2f}(db)".format(psnr_score), (255), font=font)
+                    draw.text((175, 360), "SSIM: {:0.2f}".format(ssim_score), 255, font=font)
+                    draw.text((265, 360), "PSNR: {:0.2f}(db)".format(psnr_score), 255, font=font)
                     file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}.jpg')
                     recon_np.save(file_name)
 
