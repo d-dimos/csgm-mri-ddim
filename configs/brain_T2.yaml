@@ -6,6 +6,7 @@ image_size:
 batch_size: 4
 denoise_005: true
 circle_mask: true
+corrector_steps: 2
 
 ## Paths
 model_path: "/content/csgm-mri-ddim/ncsnv2-mri-mvue/logs/mri-mvue/checkpoint_100000.pth"

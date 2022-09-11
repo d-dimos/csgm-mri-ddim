@@ -49,6 +49,7 @@ class guided_DDIM:
         timesteps = np.arange(0, diffusion_timesteps, skip)
         timesteps_next = list(timesteps)[1:] + [diffusion_timesteps]
         sigmas_torch = get_sigmas(self.config).to(self.device)
+        sigmas_np = sigmas_torch.cpu().numpy()
         sigmas = torch.cat([sigmas_torch, torch.zeros(1, device=self.device)], dim=0).to(self.device)
 
         # guided DDIM
@@ -91,6 +92,24 @@ class guided_DDIM:
                 s = p_grad - meas_grad
                 coeff = sigma_t / (1 + sigma_t ** 2).sqrt()
                 xt = (xt + coeff * (sigma_t - sigma_t_next) * s).type(torch.cuda.FloatTensor)
+
+                # corrector steps
+                for _ in range(self.config.corrector_steps):
+                    step_size = self.config.sampling.step_lr * (sigmas_np[i] / sigmas_np[-1]) ** 2
+                    noise = torch.randn_like(xt) * np.sqrt(step_size * 2)
+                    labels = (torch.ones(xt.shape[0], device=xt.device) * i).long()
+                    p_grad = score(xt, labels)
+
+                    meas = forward_operator(normalize(xt, estimated_mvue))
+                    meas_grad = torch.view_as_real(
+                        torch.sum(ifft(meas - ref) * torch.conj(maps), axis=1)).permute(0, 3, 1, 2)
+                    meas_grad = unnormalize(meas_grad, estimated_mvue)
+                    meas_grad = meas_grad.type(torch.cuda.FloatTensor)
+                    meas_grad /= torch.norm(meas_grad)
+                    meas_grad *= torch.norm(p_grad)
+                    meas_grad *= self.config.sampling.mse
+
+                    xt = xt + step_size * (p_grad - meas_grad) + noise
 
             # denoising step
             t_last = (torch.ones(self.config.batch_size) * (diffusion_timesteps - 1)).to(self.device)

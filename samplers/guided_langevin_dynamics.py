@@ -66,7 +66,6 @@ class guided_LD:
             xt = torch.randn((self.config.batch_size, 2, self.config.image_size[0], self.config.image_size[1]),
                              device=self.device)
 
-            total_steps = 0
             for step in range(self.config.model.num_classes):
                 if step <= self.config.sampling.start_iter:
                     continue
@@ -83,7 +82,6 @@ class guided_LD:
                 step_size = self.config.sampling.step_lr * (sigma / sigmas[-1]) ** 2
 
                 for _ in range(n_steps_each):
-                    total_steps += 1
                     noise = torch.randn_like(xt) * np.sqrt(step_size * 2)
                     p_grad = score(xt, labels)
 
