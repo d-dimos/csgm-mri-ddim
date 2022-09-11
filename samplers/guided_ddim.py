@@ -97,7 +97,7 @@ class guided_DDIM:
                 for _ in range(self.config.corrector_steps):
                     step_size = self.config.sampling.step_lr * (sigmas_np[i] / sigmas_np[-1]) ** 2
                     noise = torch.randn_like(xt) * np.sqrt(step_size * 2)
-                    labels = (torch.ones(xt.shape[0], device=xt.device) * i).long()
+                    labels = (torch.ones(xt.shape[0], device=xt.device) * j).long()
                     p_grad = score(xt, labels)
 
                     meas = forward_operator(normalize(xt, estimated_mvue))
