@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import sys
+import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -21,12 +22,10 @@ def get_args():
     parser.add_argument('--exp', type=str, required=True, help='Path to experiment data')
     parser.add_argument('--orientation', type=str, required=True, help='Sampling orientation',
                         choices=['horizontal', 'vertical'])
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
-def main():
-    args = get_args()
+def main(args):
     R_values = [2, 3, 6, 8, 12]
     corr_color = {0: '#ffd700',
                   3: '#fa8775'}
@@ -36,6 +35,7 @@ def main():
                 275: '#0000ff'}
 
     ## SSIM METRIC
+    logging.info("--- SSIM ---")
     plt.figure(figsize=(7, 5), dpi=300)
     plt.xlabel("R")
     plt.ylabel("Masked SSIM")
@@ -67,9 +67,10 @@ def main():
         plt.plot(R_values, means, '--o', color=corr_color[corr], linewidth=1.2,
                  label='32 steps (SBIM)' if corr == 0 else '128 steps (SBIM \w corr=3)')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
+        logging.info(f"ddim {32 * (1 + corr)} steps \w corr={corr}: {means}")
 
     # ddim 25 and 37 steps
-    for steps in [25, 37]:
+    for steps in [25, 37, 128]:
         means = []
         variances = []
         for R in R_values:
@@ -94,9 +95,10 @@ def main():
         plt.plot(R_values, means, '--o', color=step_color[steps], linewidth=1.2,
                  label=f'{steps} steps (SBIM)')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
+        logging.info(f'ddim {steps} steps: {means}')
 
     # LD 3990 and 275 steps
-    for steps in [3990, 275]:
+    for steps in [3990, 128]:
         means = []
         variances = []
         for R in R_values:
@@ -121,6 +123,7 @@ def main():
         plt.plot(R_values, means, '--o', color=LD_color[steps], linewidth=1.2,
                  label=f'{steps} steps (LD)')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
+        logging.info(f'LD {steps} steps: {means}')
 
     plt.legend()
     plt.grid(linestyle='--', linewidth=0.4)
@@ -129,6 +132,7 @@ def main():
     plt.savefig(output_file, dpi=300)
 
     ## PSNR metric
+    logging.info("--- PSNR ---")
     plt.figure(figsize=(7, 5), dpi=300)
     plt.xlabel("R")
     plt.ylabel("Masked PSNR")
@@ -160,6 +164,7 @@ def main():
         plt.plot(R_values, means, '--o', color=corr_color[corr], linewidth=1.2,
                  label='32 steps (SBIM)' if corr == 0 else '128 steps (SBIM \w corr=3)')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
+        logging.info(f'ddim 32 steps corr={corr}: {means}')
 
     # ddim 25 and 37 steps
     for steps in [25, 37]:
@@ -187,6 +192,7 @@ def main():
         plt.plot(R_values, means, '--o', color=step_color[steps], linewidth=1.2,
                  label=f'{steps} steps (SBIM)')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
+        logging.info(f'ddim {steps} steps: {means}')
 
     # LD 3990 and 275 steps
     for steps in [3990, 275]:
@@ -214,6 +220,7 @@ def main():
         plt.plot(R_values, means, '--o', color=LD_color[steps], linewidth=1.2,
                  label=f'{steps} steps (LD)')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
+        logging.info(f'LD {steps} steps: {means}')
 
     plt.legend()
     plt.grid(linestyle='--', linewidth=0.4)
@@ -225,4 +232,14 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    args = get_args()
+
+    # logging
+    handler = logging.FileHandler(os.path.join(args.exp, 'tables.txt'))
+    formatter = logging.Formatter('%(message)s')
+    handler.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.addHandler(handler)
+    logger.setLevel(20)  # info
+
+    sys.exit(main(args))
