@@ -33,7 +33,7 @@ def main():
     step_color = {25: '#ea5f94',
                   37: '#cd34b5'}
     LD_color = {3990: '#9d02d7',
-                268: '#0000ff'}
+                275: '#0000ff'}
 
     ## SSIM METRIC
     plt.figure(figsize=(7, 5), dpi=300)
