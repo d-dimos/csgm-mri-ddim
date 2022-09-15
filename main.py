@@ -43,7 +43,8 @@ def main():
         args.steps = config.sampling.n_steps_each * (config.model.num_classes - jump_to + 1) + \
                      3 * (jump_to - config.sampling.start_iter)
 
-    exp_name = args.sampler + '_' + str(args.steps) + '_R=' + str(args.R) + '_' + args.orientation + f'_corr={config.corrector_steps}'
+    exp_name = args.sampler + '_' + str(args.steps) + '_R=' + str(
+        args.R) + '_' + args.orientation + f'_corr={config.corrector_steps}'
 
     args.log_path = os.path.join(args.exp, exp_name)
     if os.path.exists(args.log_path):

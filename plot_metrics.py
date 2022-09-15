@@ -30,9 +30,11 @@ def main(args):
     corr_color = {0: '#ffd700',
                   3: '#fa8775'}
     step_color = {25: '#ea5f94',
-                  37: '#cd34b5'}
+                  37: '#cd34b5',
+                  128: '#2e3e5b'}
     LD_color = {3990: '#9d02d7',
-                275: '#0000ff'}
+                275: '#0000ff',
+                135: '#b44b06'}
 
     ## SSIM METRIC
     logging.info("--- SSIM ---")
@@ -98,7 +100,7 @@ def main(args):
         logging.info(f'ddim {steps} steps: {means}')
 
     # LD 3990 and 275 steps
-    for steps in [3990, 128]:
+    for steps in [3990, 135]:
         means = []
         variances = []
         for R in R_values:
@@ -195,7 +197,7 @@ def main(args):
         logging.info(f'ddim {steps} steps: {means}')
 
     # LD 3990 and 275 steps
-    for steps in [3990, 275]:
+    for steps in [3990, 135]:
         means = []
         variances = []
         for R in R_values:
