@@ -40,8 +40,8 @@ def main():
     # experiment dir
     if args.sampler == "LD":
         jump_to = config.sampling.start_iter if config.sampling.start_iter > 1800 else 1800
-        args.steps = config.sampling.n_steps_each * (config.model.num_classes - jump_to + 2) + \
-                     3 * (jump_to - config.sampling.start_iter + 1)
+        args.steps = config.sampling.n_steps_each * (config.model.num_classes - jump_to + 1) + \
+                     3 * (jump_to - config.sampling.start_iter)
 
     exp_name = args.sampler + '_' + str(args.steps) + '_R=' + str(args.R) + '_' + args.orientation + f'_corr={config.corrector_steps}'
 
