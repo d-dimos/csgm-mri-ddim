@@ -1,4 +1,6 @@
-# csgm-mri-ddim - NTUA (2021-2022)
+# Dimploma Thesis - NTUA (2021-2022)
+
+This repository hosts the code for replicating the experiments and plots included in my diploma thesis **Accelerating Compressed Sensing MRI with Score-based Implicit Model**.
 
 ## Installation Instructions
 
