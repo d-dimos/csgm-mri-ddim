@@ -27,14 +27,14 @@ def get_args():
 
 def main(args):
     R_values = [2, 3, 6, 8, 12]
-    corr_color = {0: '#ffd700',
-                  3: '#fa8775'}
-    step_color = {25: '#ea5f94',
-                  37: '#cd34b5',
-                  128: '#2e3e5b'}
-    LD_color = {3990: '#9d02d7',
-                275: '#0000ff',
-                135: '#b44b06'}
+    corr_color = {0: '#06592A',
+                  3: '#089099'}
+    step_color = {25: '#7CCBA2',
+                  37: '#FCDE9C',
+                  128: '#F0746E'}
+    LD_color = {3990: '#DC3977',
+                275: '#7C1D6F',
+                135: '#8F003B'}
 
     ## SSIM METRIC
     logging.info("--- SSIM ---")
@@ -70,6 +70,31 @@ def main(args):
                  label='32 steps (SBIM)' if corr == 0 else '128 steps (SBIM \w corr=3)')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
         logging.info(f"ddim {32 * (1 + corr)} steps \w corr={corr}: {means}")
+
+    # ddim 64 steps corr=3
+    means = []
+    variances = []
+    for R in R_values:
+        try:
+            f = open(os.path.join(args.exp, f'ddim_64_R={R}_{args.orientation}_corr=3/stats.json'))
+            stats = json.load(f)
+            mean = np.array(stats['ssim']).mean()
+            conf_interval = mean_confidence_interval(stats['ssim'])[1]
+            var = np.array(conf_interval)  # np.array(stats['ssim']).var()
+            means.append(mean)
+            variances.append(var)
+        except:
+            print(f'ddim_64_R={R}_{args.orientation}_corr=3: Not found!')
+
+    means = np.array(means)
+    variances = np.array(variances)
+
+    plt.ylim((0.81, 1.01))
+    plt.yticks([0.85, 0.9, 0.95, 1.00])
+    plt.plot(R_values, means, '--o', color='#0D4A70', linewidth=1.2,
+                label='256 steps (SBIM \w corr=3)')
+    plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
+    logging.info(f"ddim 256 steps \w corr=3: {means}")
 
     # ddim 25 and 37 steps
     for steps in [25, 37, 128]:
@@ -167,6 +192,31 @@ def main(args):
                  label='32 steps (SBIM)' if corr == 0 else '128 steps (SBIM \w corr=3)')
         plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
         logging.info(f'ddim 32 steps corr={corr}: {means}')
+
+    # ddim 64 steps corr=3
+    means = []
+    variances = []
+    for R in R_values:
+        try:
+            f = open(os.path.join(args.exp, f'ddim_64_R={R}_{args.orientation}_corr=3/stats.json'))
+            stats = json.load(f)
+            mean = np.array(stats['psnr']).mean()
+            conf_interval = mean_confidence_interval(stats['psnr'])[1]
+            var = np.array(conf_interval)  # np.array(stats['ssim']).var()
+            means.append(mean)
+            variances.append(var)
+        except:
+            print(f'ddim_64_R={R}_{args.orientation}_corr=3: Not found!')
+
+    means = np.array(means)
+    variances = np.array(variances)
+
+    plt.ylim((0.81, 1.01))
+    plt.yticks([0.85, 0.9, 0.95, 1.00])
+    plt.plot(R_values, means, '--o', color='#0D4A70', linewidth=1.2,
+                label='256 steps (SBIM \w corr=3)')
+    plt.fill_between(R_values, means - variances, means + variances, color='b', alpha=0.05)
+    logging.info(f"ddim 256 steps \w corr=3: {means}")
 
     # ddim 25 and 37 steps
     for steps in [25, 37]:
