@@ -2,6 +2,8 @@
 
 This repository hosts the code for replicating the experiments and plots included in my diploma thesis **Accelerating Compressed Sensing MRI with Score-based Implicit Model**.
 
+![](https://github.com/thesis_ntua_sbim/assets/mri.gif)
+
 ## Installation Instructions
 
 1. Clone and enter this repo: <br />
