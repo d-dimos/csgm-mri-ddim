@@ -2,8 +2,9 @@
 
 This repository hosts the code for replicating the experiments and plots included in my diploma thesis **Accelerating Compressed Sensing MRI with Score-based Implicit Model**.
 
-![](https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/32stepsMRI_comp.gif)
-
+<p align="center">
+  <img width="579" height="193"  alt="animated" src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/32stepsMRI_comp.gif">
+</p>
 
 ## Sample Experiment Plots
 A comparison between **SBIM**, **SBIM-PC** and **Langevin Dynamics** when used to reconstruct MRIs accross different acceleration factors R.
