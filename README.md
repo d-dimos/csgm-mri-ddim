@@ -10,7 +10,7 @@ A comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruc
  
 <p float="left">
   <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png" width="400" />
-  <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png" width="400" /> 
+  <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/psnr_vert.png" width="400" /> 
 </p>
 
 
