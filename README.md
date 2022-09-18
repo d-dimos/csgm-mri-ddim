@@ -60,7 +60,7 @@ A comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruc
 3. Plot the evaluation metrics: `python make_plot.py`. Arguments:
    - `--exp` directory of saved results
    - `--orientation` MRI orientation
-4. Make a plot with reconstructed MRIs: `python make_plot.py`. Arguments:
+4. Make a grid of reconstructed MRIs: `python make_grid.py`. Arguments:
    - `--exp_dir` directory of saved images
 
     
