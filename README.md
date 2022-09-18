@@ -6,7 +6,7 @@ This repository hosts the code for replicating the experiments and plots include
   <img width="579" height="193"  alt="animated" src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/32stepsMRI_comp.gif">
 </p>
 
-## Sample Experiment Plots
+## Sample Experiments
 A comparison between **SBIM**, **SBIM-PC** and **Langevin Dynamics** when used to reconstruct MRIs accross different acceleration factors R.
  
 <p float="left">
@@ -31,6 +31,8 @@ A comparison between **SBIM**, **SBIM-PC** and **Langevin Dynamics** when used t
 |     6     |      31.0       |         **34.1**          |          34.0          |
 |     8     |      26.4       |         **32.9**          |          30.8          |
 |    12     |      26.0       |         **32.3**          |          30.3          |
+
+**Sample Reconstructions**
 
 
 ## Installation Instructions
