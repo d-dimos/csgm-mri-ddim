@@ -14,7 +14,7 @@ A comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruc
 </p>
 
 **Masked SSIM**
-| R/Sampler | 32 steps (SBIM) | 3990 steps (Langevin) | 256 steps (SBIM \w corr=3) |
+| R | 32 steps (SBIM) | 3990 steps (Langevin) | 256 steps (SBIM \w corr=3) |
 |:---------:|:---------------:|:---------------------:|:--------------------------:|
 |     2     |      0.92       |         0.91          |          **0.93**          |
 |     3     |      0.92       |         0.90          |          **0.93**          |
@@ -23,7 +23,7 @@ A comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruc
 |    12     |      0.83       |         0.89          |          **0.90**          |
 
 **Masked PSNR**
-| R/Sampler | 32 steps (SBIM) | 3990 steps (Langevin) | 256 steps (SBIM \w corr=3) |
+| R | 32 steps (SBIM) | 3990 steps (Langevin) | 256 steps (SBIM \w corr=3) |
 |:---------:|:---------------:|:---------------------:|:--------------------------:|
 |     2     |      36.4       |         35.9          |          **37.1**          |
 |     3     |      35.9       |         35.8          |          **36.8**          |
