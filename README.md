@@ -36,7 +36,7 @@ A comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruc
 
 1. Clone and enter this repo: <br />
   `git clone https://github.com/d-dimos/csgm-mri-ddim.git` <br />
-  `cd csgm-mri-ddim`
+  `cd thesis_ntua_sbim`
 2. Install the requirements: `pip install -r requirements.txt`
 3. Download a small subset of the test dataset: <br />
   `gdown https://drive.google.com/uc?id=1mpnV1iXid1PG0RaJswM6t9yI76b2IPxc` <br />
