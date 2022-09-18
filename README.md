@@ -13,6 +13,24 @@ A comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruc
   <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/psnr_vert.png" width="400" /> 
 </p>
 
+**Masked SSIM**
+| R/Sampler | 32 steps (SBIM) | 3990 steps (Langevin) | 256 steps (SBIM \w corr=3) |
+|:---------:|:---------------:|:---------------------:|:--------------------------:|
+|     2     |      0.92       |         0.91          |          **0.93**          |
+|     3     |      0.92       |         0.90          |          **0.93**          |
+|     6     |      0.89       |         0.89          |          **0.92**          |
+|     8     |      0.84       |         0.89          |          **0.90**          |
+|    12     |      0.83       |         0.89          |          **0.90**          |
+
+**Masked PSNR**
+| R/Sampler | 32 steps (SBIM) | 3990 steps (Langevin) | 256 steps (SBIM \w corr=3) |
+|:---------:|:---------------:|:---------------------:|:--------------------------:|
+|     2     |      36.4       |         35.9          |          **37.1**          |
+|     3     |      35.9       |         35.8          |          **36.8**          |
+|     6     |      31.0       |         **34.1**          |          34.0          |
+|     8     |      26.4       |         **32.9**          |          30.8          |
+|    12     |      26.0       |         **32.3**          |          30.3          |
+
 
 ## Installation Instructions
 
