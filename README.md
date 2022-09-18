@@ -2,7 +2,7 @@
 
 This repository hosts the code for replicating the experiments and plots included in my diploma thesis **Accelerating Compressed Sensing MRI with Score-based Implicit Model**.
 
-![](https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/mri.gif)
+![](https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/32stepsMRI_comp.gif)
 
 
 ## Sample Experiment Plots
