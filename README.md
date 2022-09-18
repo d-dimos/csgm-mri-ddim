@@ -6,7 +6,7 @@ This repository hosts the code for replicating the experiments and plots include
 
 
 ## Sample Experiment Plots
-A comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruct MRIs accross different acceleration factors R.
+A comparison between **SBIM**, **SBIM-PC** and **Langevin Dynamics** when used to reconstruct MRIs accross different acceleration factors R.
  
 <p float="left">
   <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png" width="400" />
