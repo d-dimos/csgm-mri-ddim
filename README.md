@@ -44,24 +44,24 @@ A comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruc
 4. Download the pretrained NCSNv2: <br />
   `gdown https://drive.google.com/uc?id=1vAIXf8n67yEAPmH2I9qiDWzmq9fGKPYL` <br />
   `tar -zxvf checkpoint.tar.gz`
-5. For instructions on how to estimate sensitivity maps (apart from the ones downloaded along with the sample data above), please visit [this repo](https://github.com/utcsilab/csgm-mri-langevin)
+5. For instructions on how to estimate sensitivity maps (apart from the ones downloaded along with the sample data above), please visit [this repo](https://github.com/utcsilab/csgm-mri-langevin).
 
 
 ## Example Commands
 1. Sample using the pretrained NCSNv2: `python main.py`. Arguments:
-   1. `--config` configuration file, in the format of `configs/brain_T2`
-   2. `--sampler` sampler type ['ddim', 'LD']
-   3. `--steps` number of DDIM (SBIM) steps
-   4. `--R` MRI acceleration factor
-   5. `--orientation` MRI orientation ['vertival', 'horizontal']
-   6. `--pattern` ['equispaced']
-   7. `--save_images` if you want to save the reconstructed MRIs
-   8. `--exp` directory to save results
-2. Plot the evaluation metrics: `python make_plot.py`. Arguments:
-   1. `--exp` directory of saved results
-   2. `--orientation` MRI orientation
-3. Make a plot with reconstructed MRIs: `python make_plot.py`. Arguments:
-   1. `--exp_dir` directory of saved images
+   - `--config` configuration file, in the format of `configs/brain_T2`
+   - `--sampler` sampler type ['ddim', 'LD']
+   - `--steps` number of DDIM (SBIM) steps
+   - `--R` MRI acceleration factor
+   - `--orientation` MRI orientation ['vertival', 'horizontal']
+   - `--pattern` ['equispaced']
+   - `--save_images` if you want to save the reconstructed MRIs
+   - `--exp` directory to save results
+3. Plot the evaluation metrics: `python make_plot.py`. Arguments:
+   - `--exp` directory of saved results
+   - `--orientation` MRI orientation
+4. Make a plot with reconstructed MRIs: `python make_plot.py`. Arguments:
+   - `--exp_dir` directory of saved images
 
     
 ## Citations
