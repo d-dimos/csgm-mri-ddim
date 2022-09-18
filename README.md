@@ -36,8 +36,12 @@ This repository hosts the code for replicating the experiments and plots include
 
 ## Sample Experiment Plots
 The following plots visualize a comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruct MRIs accross different acceleration factors R.
-![alt-text-1](https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png) ![alt-text-2](https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/psnr_vert.png)
  
+<p float="left">
+  <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png" width="100" />
+  <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png" width="100" /> 
+</p>
+
 ## Citations
 
 This code uses prior work from the following papers, which must be cited:
