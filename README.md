@@ -4,6 +4,16 @@ This repository hosts the code for replicating the experiments and plots include
 
 ![](https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/mri.gif)
 
+
+## Sample Experiment Plots
+A comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruct MRIs accross different acceleration factors R.
+ 
+<p float="left">
+  <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png" width="400" />
+  <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png" width="400" /> 
+</p>
+
+
 ## Installation Instructions
 
 1. Clone and enter this repo: <br />
@@ -17,14 +27,6 @@ This repository hosts the code for replicating the experiments and plots include
   `gdown https://drive.google.com/uc?id=1vAIXf8n67yEAPmH2I9qiDWzmq9fGKPYL` <br />
   `tar -zxvf checkpoint.tar.gz`
 5. For instructions on how to estimate sensitivity maps (apart from the ones downloaded along with the sample data above), please visit [this repo](https://github.com/utcsilab/csgm-mri-langevin)
-
-## Sample Experiment Plots
-The following plots visualize a comparison between SBIM, SBIM-PC and Langevin Dynamics when used to reconstruct MRIs accross different acceleration factors R.
- 
-<p float="left">
-  <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png" width="400" />
-  <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/ssim_vert.png" width="400" /> 
-</p>
 
 
 ## Example Commands
