@@ -32,7 +32,6 @@ def get_args():
     parser.add_argument('--exp', type=str, required=True, help='Path to experiment data')
     parser.add_argument('--orientation', type=str, required=True, help='Sampling orientation',
                         choices=['horizontal', 'vertical'])
-    parser.add_argument('--no_outliers', action='store_true', help='Whether to keep failed reconstructions')
     return parser.parse_args()
 
 

@@ -26,7 +26,7 @@ def edit(orig_img, recon_img):
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description='Template')
+    parser = argparse.ArgumentParser()
     parser.add_argument('--exp_dir', type=str, required=True, help='Path to experiment images')
     args = parser.parse_args()
     return args
