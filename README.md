@@ -33,7 +33,9 @@ A comparison between **SBIM**, **SBIM-PC** and **Langevin Dynamics** when used t
 |    12     |      26.0       |         **32.3**          |          30.3          |
 
 **Sample Reconstructions**
-
+<p float="center">
+  <img src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/brains_grid.png" width="400" />
+</p>
 
 ## Installation Instructions
 
