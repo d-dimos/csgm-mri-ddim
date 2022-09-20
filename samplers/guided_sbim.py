@@ -67,7 +67,10 @@ class guided_DDIM:
                 torch.complex(x[:, 0], x[:, 1]),
                 maps, mask)
 
-            xt = torch.randn((self.config.batch_size, 2, 384, 384), device=self.device)
+            xt = torch.randn((self.config.batch_size,
+                              self.config.data.channels,
+                              self.config.image_size[0],
+                              self.config.image_size[1]), device=self.device)
 
             for step, (i, j) in enumerate(zip(timesteps, timesteps_next)):
                 if step % log_interval == 0:
@@ -128,7 +131,10 @@ class guided_DDIM:
 
             H_norm = normalize(H, estimated_mvue)
             to_display = torch.view_as_complex(
-                H_norm.permute(0, 2, 3, 1).reshape(-1, 384, 384, 2).contiguous()
+                H_norm.permute(0, 2, 3, 1).reshape(-1,
+                                                   self.config.image_size[0],
+                                                   self.config.image_size[1],
+                                                   self.config.data.channels).contiguous()
             ).abs().flip(-2)
 
             for i in range(self.config.batch_size):
@@ -155,8 +161,8 @@ class guided_DDIM:
                     font = ImageFont.truetype(
                         '/content/image_processing_with_python/09_drawing_text/Gidole-Regular.ttf', 16
                         )
-                    draw.text((175, 360), "SSIM: {:0.2f}".format(ssim_score),(255), font=font )
-                    draw.text((265, 360), "PSNR: {:0.2f}(db)".format(psnr_score),(255), font=font )
+                    draw.text((175, 360), "SSIM: {:0.2f}".format(ssim_score), 255, font=font)
+                    draw.text((265, 360), "PSNR: {:0.2f}(db)".format(psnr_score), 255, font=font)
                     file_name = os.path.join(self.args.log_path, f'{self.config.anatomy}_{slice_idx}.jpg')
                     recon_np.save(file_name)
 
