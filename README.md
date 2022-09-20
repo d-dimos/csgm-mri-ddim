@@ -54,7 +54,7 @@ A comparison between **SBIM**, **SBIM-PC** and **Langevin Dynamics** when used t
 
 ## Example Commands
 1. Sample using the pretrained NCSNv2: `python main.py`. Arguments:
-   - `--config` configuration file, in the format of `configs/brain_T2`
+   - `--config` configuration file, in the format of `configs/brain_T2.yaml`
    - `--sampler` sampler type ['ddim', 'LD']
    - `--steps` number of DDIM (SBIM) steps
    - `--R` MRI acceleration factor
