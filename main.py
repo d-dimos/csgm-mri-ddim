@@ -19,6 +19,7 @@ def get_args():
     parser.add_argument('--sampler', type=str, required=True, help='Sampler type', choices=['ddim', 'LD'])
     parser.add_argument('--steps', type=int, required=True, help='Sampling steps')
     parser.add_argument('--R', type=int, required=True, help='Acceleration rate')
+    parser.add_argument('--anatomy', type=str, required=True, help='Anatomy type', choices=['brain', 'knee'])
     parser.add_argument('--orientation', type=str, required=True, help='Sampling orientation',
                         choices=['horizontal', 'vertical'])
     parser.add_argument('--pattern', type=str, required=True, help='Sampling pattern', choices=['equispaced'])
@@ -38,6 +39,7 @@ def main():
     config.device = args.device
 
     # experiment dir
+    args.exp += '_' + args.anatomy
     if args.sampler == "LD":
         jump_to = config.sampling.start_iter if config.sampling.start_iter > 1800 else 1800
         args.steps = config.sampling.n_steps_each * (config.model.num_classes - jump_to + 1) + \
