@@ -58,6 +58,7 @@ A comparison between **SBIM**, **SBIM-PC** and **Langevin Dynamics** when used t
    - `--sampler` sampler type ['ddim', 'LD']
    - `--steps` number of DDIM (SBIM) steps
    - `--R` MRI acceleration factor
+   - `--anatomy` anatomy type ['brain', 'knee']
    - `--orientation` MRI orientation ['vertival', 'horizontal']
    - `--pattern` ['equispaced']
    - `--save_images` if you want to save the reconstructed MRIs
