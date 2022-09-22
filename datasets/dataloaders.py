@@ -353,6 +353,15 @@ class MVU_Estimator_Knees(Dataset):
         else:
             raise NotImplementedError
 
+        ## name for mvue file
+        mvue_file = os.path.join(self.input_dir,
+                                 os.path.basename(self.file_list[scan_idx]))
+
+        extra_pad = (28 - maps.shape[0]) // 2
+        npad = ((extra_pad, extra_pad), (0, 0), (0, 0))
+        maps = np.pad(maps, npad, 'constant', constant_values=0)
+        gt_ksp = np.pad(gt_ksp, npad, 'constant', constant_values=0)
+
         # Output
         sample = {
             'mvue': mvue,
