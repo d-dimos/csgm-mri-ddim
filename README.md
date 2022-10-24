@@ -1,6 +1,6 @@
 # Dimploma Thesis - NTUA (2021-2022)
 
-This repository hosts the code for replicating the experiments and plots included in my diploma thesis **Accelerating Compressed Sensing MRI with Score-based Implicit Model**.
+This repository hosts the code for replicating the experiments and plots included in my diploma thesis **Compressed Sensing MRI using Score-based Implicit Model**.
 
 <p align="center">
   <img width="579" height="193"  alt="animated" src="https://github.com/d-dimos/thesis_ntua_sbim/blob/main/assets/32stepsMRI_comp.gif">
